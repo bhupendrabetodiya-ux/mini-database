@@ -20,6 +20,7 @@ private:
     void OnDelete(wxCommandEvent& event);
     void OnSearch(wxCommandEvent& event);
     void RefreshList();
+    Student GetStudentFromForm() const;
 
     wxDECLARE_EVENT_TABLE();
 };
