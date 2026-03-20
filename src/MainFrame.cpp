@@ -1,4 +1,5 @@
 #include "MainFrame.h"
+#include <stdexcept>
 
 enum {
     ID_ADD = 1,
@@ -108,45 +109,46 @@ void MainFrame::RefreshList() {
     }
 }
 
-void MainFrame::OnAdd(wxCommandEvent&) {
+Student MainFrame::GetStudentFromForm() const {
     Student s;
-    s.id = idCtrl->GetValue().ToStdString();
-    s.name = nameCtrl->GetValue().ToStdString();
-    s.dob = dobCtrl->GetValue().ToStdString();
+    s.id        = idCtrl->GetValue().ToStdString();
+    s.name      = nameCtrl->GetValue().ToStdString();
+    s.dob       = dobCtrl->GetValue().ToStdString();
     s.className = classCtrl->GetValue().ToStdString();
-    s.age = std::stoi(ageCtrl->GetValue().ToStdString());
-    s.height = std::stof(heightCtrl->GetValue().ToStdString());
-    s.weight = std::stof(weightCtrl->GetValue().ToStdString());
-    s.phone = phoneCtrl->GetValue().ToStdString();
-    s.address = addressCtrl->GetValue().ToStdString();
-    s.active = true;
+    s.age       = std::stoi(ageCtrl->GetValue().ToStdString());
+    s.height    = std::stof(heightCtrl->GetValue().ToStdString());
+    s.weight    = std::stof(weightCtrl->GetValue().ToStdString());
+    s.phone     = phoneCtrl->GetValue().ToStdString();
+    s.address   = addressCtrl->GetValue().ToStdString();
+    s.active    = true;
+    return s;
+}
 
-    if (db.addStudent(s)) {
-        RefreshList();
-        wxMessageBox("Student added!");
-    } else {
-        wxMessageBox("ID already exists!");
+void MainFrame::OnAdd(wxCommandEvent&) {
+    try {
+        Student s = GetStudentFromForm();
+        if (db.addStudent(s)) {
+            RefreshList();
+            wxMessageBox("Student added!");
+        } else {
+            wxMessageBox("ID already exists!");
+        }
+    } catch (const std::exception& e) {
+        wxMessageBox(std::string("Invalid input: ") + e.what(), "Input Error");
     }
 }
 
 void MainFrame::OnUpdate(wxCommandEvent&) {
-    Student s;
-    s.id = idCtrl->GetValue().ToStdString();
-    s.name = nameCtrl->GetValue().ToStdString();
-    s.dob = dobCtrl->GetValue().ToStdString();
-    s.className = classCtrl->GetValue().ToStdString();
-    s.age = std::stoi(ageCtrl->GetValue().ToStdString());
-    s.height = std::stof(heightCtrl->GetValue().ToStdString());
-    s.weight = std::stof(weightCtrl->GetValue().ToStdString());
-    s.phone = phoneCtrl->GetValue().ToStdString();
-    s.address = addressCtrl->GetValue().ToStdString();
-    s.active = true;
-
-    if (db.updateStudent(s)) {
-        RefreshList();
-        wxMessageBox("Student updated!");
-    } else {
-        wxMessageBox("Student not found!");
+    try {
+        Student s = GetStudentFromForm();
+        if (db.updateStudent(s)) {
+            RefreshList();
+            wxMessageBox("Student updated!");
+        } else {
+            wxMessageBox("Student not found!");
+        }
+    } catch (const std::exception& e) {
+        wxMessageBox(std::string("Invalid input: ") + e.what(), "Input Error");
     }
 }
 
